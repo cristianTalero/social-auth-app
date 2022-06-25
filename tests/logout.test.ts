@@ -4,6 +4,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 import { User, LogoutModel } from '../src/models/user.model'
 import * as bcrypt from 'bcrypt'
+import { Channel, Connection } from 'amqplib'
+import * as rabbitmq from '../src/config/rabbitmq.config'
 import * as redis from '../src/config/redis.config'
 
 
@@ -11,14 +13,19 @@ describe('POST /logout', () => {
 
 	let db: MongoMemoryServer
 	let test_user: LogoutModel
+	let mq_channel: Channel
+	let mq_connection: Connection
 
 	beforeAll(async () => {
 
 		db = new MongoMemoryServer()
 		await db.start();
-		await redis.connect()
-		
 		await mongoose.connect(db.getUri())
+
+		await redis.connect()
+
+		mq_connection = await rabbitmq.connect()
+		mq_channel = rabbitmq.channel
 
 	})
 
@@ -53,6 +60,7 @@ describe('POST /logout', () => {
 
 		await User.deleteMany()
 		await redis.client.flushAll()
+		await mq_channel.purgeQueue('status')
 
 	})
 
@@ -62,6 +70,9 @@ describe('POST /logout', () => {
 		await db.stop()
 		await redis.client.disconnect()
 
+		await mq_channel.close()
+		await mq_connection.close()
+
 	})
 
 	test('Should successfully logout with an HTTP code 204', async () => {
@@ -70,6 +81,13 @@ describe('POST /logout', () => {
 			.send(test_user)
 
 		expect(res.statusCode).toBe(204)
+
+		mq_channel.consume('status', msg => {
+			mq_channel.ack(msg!)
+			expect(msg?.fields.routingKey).toBe('disconnect')
+			expect(mongoose.Types.ObjectId.isValid(msg?.content.toString()!))
+				.toBeTruthy()
+		})
 
 	})
 

@@ -7,12 +7,14 @@
     "dev": "nodemon",
     "start": "node dist/index.js",
     "build": "npx tsc -p tsconfig.build.json",
-    "test": "jest --runInBand --detectOpenHandles"
+    "test": "jest --runInBand --detectOpenHandles",
+    "test:c": "jest --coverage"
   },
   "keywords": [],
   "author": "Cristian Talero",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.10.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@jest/types": "^28.1.1",
+    "@types/amqplib": "^0.8.2",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",

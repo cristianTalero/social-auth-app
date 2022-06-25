@@ -2,8 +2,12 @@ version: '3.8'
 
 services:
   server:
+    restart: always
+    container_name: server
     build: .
     command: npm start
+    networks:
+      - local
     ports:
       - "5000:5000"
     volumes:
@@ -11,7 +15,28 @@ services:
     depends_on:
       - redis
   redis:
+    restart: always
+    container_name: redis
     image: redis:alpine
+    networks:
+      - local
     ports:
       - "6379:6379"
     command: redis-server --requirepass contraseñaderedis.123456
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: rabbitmquser
+      RABBITMQ_DEFAULT_PASS: rabbitmqpassword
+    networks:
+      - local
+
+networks:
+  local:
+    driver: bridge

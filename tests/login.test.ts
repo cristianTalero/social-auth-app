@@ -5,6 +5,8 @@ import mongoose from 'mongoose'
 import { User, LoginModel } from '../src/models/user.model'
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
+import { Channel, Connection } from 'amqplib'
+import * as rabbitmq from '../src/config/rabbitmq.config'
 import * as redis from '../src/config/redis.config'
 
 
@@ -15,6 +17,8 @@ interface JWTPayload {
 describe('POST /login', () => {
 
 	let db: MongoMemoryServer
+	let mq_channel: Channel
+	let mq_connection: Connection
 	const test_user: LoginModel = {
 		username: 'test_username',
 		password: 'test_password'
@@ -24,10 +28,13 @@ describe('POST /login', () => {
 
 		db = new MongoMemoryServer()
 		await db.start();
-		await redis.connect()
-		
 		await mongoose.connect(db.getUri())
-		
+
+		await redis.connect()
+
+		mq_connection = await rabbitmq.connect()
+		mq_channel = rabbitmq.channel
+
 	})
 
 	beforeEach(async () => {
@@ -48,6 +55,7 @@ describe('POST /login', () => {
 
 		await User.deleteMany()
 		await redis.client.flushAll()
+		await mq_channel.purgeQueue('status')
 
 	})
 
@@ -56,6 +64,9 @@ describe('POST /login', () => {
 		await mongoose.disconnect()
 		await db.stop()
 		await redis.client.disconnect()
+
+		await mq_channel.close()
+		await mq_connection.close()
 
 	})
 
@@ -73,6 +84,13 @@ describe('POST /login', () => {
 		const { id } = jwt.verify(token, process.env.SECRET_KEY!) as JWTPayload
 		expect(mongoose.Types.ObjectId.isValid(id))
 			.toBeTruthy()
+
+		mq_channel.consume('status', msg => {
+			mq_channel.ack(msg!)
+			expect(msg?.fields.routingKey).toBe('connect')
+			expect(mongoose.Types.ObjectId.isValid(msg?.content.toString()!))
+				.toBeTruthy()
+		})
 
 	})
 

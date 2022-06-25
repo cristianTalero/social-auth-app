@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator'
 import { client } from '../config/redis.config'
 import { User, LogoutModel } from '../models/user.model'
 import * as bcrypt from 'bcrypt'
+import { channel } from '../config/rabbitmq.config'
 
 
 /** Close the session of the **user**. */
@@ -69,6 +70,11 @@ export async function Logout(req: Request, res: Response) {
 
     // Set user as "Disconnected"
     await client.sRem('connected_users', user_data._id.toString())
+
+    // Publish "Disconnected" status in RabbitMQ queue
+    await channel.assertQueue('status', { durable: true })
+    await channel.bindQueue('status', 'auth', 'disconnect')
+    channel.publish('auth', 'disconnect', Buffer.from(user_data._id.toString()))
 
     // Clear cache
     await client.hDel('logout', user_data._id.toString())

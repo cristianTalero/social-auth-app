@@ -4,6 +4,7 @@ import { User, LoginModel } from '../models/user.model'
 import * as jwt from 'jsonwebtoken'
 import * as bcrypt from 'bcrypt'
 import { client } from '../config/redis.config'
+import { channel } from '../config/rabbitmq.config'
 
 
 /** Login in to the application. Create a new **session**. */
@@ -73,6 +74,11 @@ export async function Login(req: Request, res: Response) {
       'connected_users',
       user_data._id.toString()
     )
+
+    // Publish "Connected" status in RabbitMQ queue
+    await channel.assertQueue('status', { durable: true })
+    await channel.bindQueue('status', 'auth', 'connect')
+    channel.publish('auth', 'connect', Buffer.from(user_data._id.toString()))
 
     // Create a new JWT to send to user
     const token = jwt.sign({ id: user_data._id }, process.env.SECRET_KEY!)

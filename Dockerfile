@@ -13,8 +13,9 @@ ENV SECRET_KEY 'kjhds57fg687j6gffdhdf68h7fdh8yaY98Y8Yiy7796t7969OY8iddg88HJ'
 ENV REDIS_URL 'redis://redis:6379'
 ENV REDIS_DATABASE 0
 ENV REDIS_PASSWORD 'contraseñaderedis.123456'
+ENV RABBITMQ_USER 'rabbitmquser'
+ENV RABBITMQ_PASS 'rabbitmqpassword'
 
 EXPOSE 5000
 
-RUN npm install -g npm@
 RUN npm install

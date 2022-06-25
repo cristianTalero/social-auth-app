@@ -9,7 +9,6 @@ export const client = (() => {
   return createClient({
 
     url: process.env.REDIS_URL,
-    database: parseInt(process.env.REDIS_DATABASE!, 10),
     password: process.env.REDIS_PASSWORD
 
   })
@@ -20,7 +19,7 @@ export async function connect() {
 
   client.on('error', err => {
 
-    console.log('Redis error', err)
+    console.log('Error trying to connect to Redis: ', err)
 
   })
 
