@@ -3,7 +3,7 @@ version: '3.8'
 services:
   server:
     restart: always
-    container_name: server
+    image: social-app-auth_server
     build: .
     command: npm start
     networks:
@@ -16,7 +16,6 @@ services:
       - redis
   redis:
     restart: always
-    container_name: redis
     image: redis:alpine
     networks:
       - local
@@ -25,7 +24,6 @@ services:
     command: redis-server --requirepass contraseñaderedis.123456
   rabbitmq:
     image: rabbitmq:alpine
-    container_name: rabbitmq
     restart: always
     ports:
       - "5672:5672"
