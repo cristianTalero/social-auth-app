@@ -18,7 +18,7 @@ jobs:
     - name: Build the Docker image
       run: docker-compose build
     - name: Add tag to Docker image
-      run: docker tag cristiantalero/social-app-auth_server:production
+      run: docker tag social-app-auth_server social-app-auth_server:production
     - name: Login in Docker Hub
       run: docker login -u cristiantalero -p ${{ secrets.DOCKER_PASSWORD }}
     - name: Push image to Docker Hub
