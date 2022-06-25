@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "types": ["node", "jest"],
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "outDir": "./dist",
+        "rootDirs": ["./src", "./tests"],
+        "strict": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "lib": ["es2015"],
+    "include": ["src/**/*", "tests/**/*"],
+    "exclude": ["node_modules"]
+}

@@ -1,0 +1,46 @@
+{
+  "name": "social-auth-app",
+  "version": "1.0.0",
+  "description": "This is the auth service of app",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node dist/index.js",
+    "build": "npx tsc -p tsconfig.build.json",
+    "test": "jest --runInBand --detectOpenHandles"
+  },
+  "keywords": [],
+  "author": "Cristian Talero",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-jsdoc-swagger": "^1.6.8",
+    "express-validator": "^6.14.2",
+    "helmet": "^5.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.0",
+    "morgan": "^1.10.0",
+    "redis": "^4.1.0",
+    "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "@jest/types": "^28.1.1",
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jest": "^28.1.2",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^18.0.0",
+    "@types/supertest": "^2.0.12",
+    "jest": "^28.1.1",
+    "mongodb-memory-server": "^8.7.0",
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.8.1"
+  }
+}
