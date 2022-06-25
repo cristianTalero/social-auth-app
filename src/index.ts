@@ -5,7 +5,7 @@ import * as rabbitmq from './config/rabbitmq.config'
 
 
 // Initialize app
-app.listen(5000, async () => {
+app.listen(7000, async () => {
 
   await db.connect()
   await redis.connect()

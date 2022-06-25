@@ -12,7 +12,7 @@ export async function connect() {
       dbName: process.env.DATABASE_NAME
     })
 
-    console.log('Connection was successfully')
+    console.log('MongoDB works')
 
   } 
   
