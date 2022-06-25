@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag cristiantalero/social-app-auth_server:production
+    - name: Login in Docker Hub
+      run: docker login -u cristiantalero -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Push image to Docker Hub
+      run: docker push cristiantalero/social-app-auth_server:production
